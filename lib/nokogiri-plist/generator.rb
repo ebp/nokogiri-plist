@@ -40,6 +40,10 @@ module NokogiriPList
           tag("real", value, current_indent)
         when BigDecimal
           tag("real", value.to_s('F'), current_indent)
+        when StringIO
+          # StringIO serves as a marker to make this data instead of a string.
+          # Expect value to already be converted to base64.
+          tag("data", value.read, current_indent)
         end
       end
 
@@ -67,7 +71,7 @@ module NokogiriPList
 end
 
 
-[String, Symbol, Integer, Float, BigDecimal, Date, Time, Hash, Array, TrueClass, FalseClass].each do |klass|
+[String, Symbol, Integer, Float, BigDecimal, Date, Time, Hash, Array, TrueClass, FalseClass, StringIO].each do |klass|
   klass.class_eval do
 
     def to_plist_xml(current_indent = 0)
